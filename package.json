@@ -1,0 +1,12 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "Todo app made simply",
+  "main": "index.tsx",
+  "scripts": {
+    "start": "bun run index.ts",
+    "debug": "bun run --inspect index.ts"
+  },
+  "author": "Darren Dub",
+  "license": "ISC"
+}
