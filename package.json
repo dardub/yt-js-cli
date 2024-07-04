@@ -4,7 +4,7 @@
   "description": "Todo app made simply",
   "main": "index.tsx",
   "scripts": {
-    "start": "bun run index.ts",
+    "start": "bun run --hot index.ts",
     "debug": "bun run --inspect index.ts"
   },
   "author": "Darren Dub",

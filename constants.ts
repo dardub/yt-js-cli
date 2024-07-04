@@ -1,12 +1,26 @@
-export const HEADERS = {
-  CONTENT_TYPE: "Content-Type",
-  CONTENT_ENCODING: "Content-Encoding",
-} as const;
-
-export type ResposeHeaders = keyof typeof HEADERS;
-
-export const COMPRESSION_TYPES = {
-  GZIP: "gzip",
+export enum Headers {
+  ContentType = "Content-Type",
+  ContentEncoding = "Content-Encoding",
+  AcceptEncoding = "Accept-Encoding",
 };
 
-export type CompressionTypes = keyof typeof COMPRESSION_TYPES;
+export enum RequestMethod {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  PATCH = "PATCH",
+  ALL = "ALL",
+  OPTIONS = "OPTIONS",
+  HEAD = "HEAD",
+  SEARCH = "SEARCH",
+}
+
+export enum CompressionTypes {
+  Gzip = "gzip",
+};
+
+export enum ContentTypes {
+  Html = "text/html",
+  Json = "text/json",
+}
