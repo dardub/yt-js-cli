@@ -8,5 +8,8 @@
     "debug": "bun run --inspect index.ts"
   },
   "author": "Darren Dub",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bun": "^1.1.6"
+  }
 }
