@@ -60,6 +60,17 @@ const html = ({ todos = [] }: { todos: string[] }) => `
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TODO APP</title>
+        <style>
+          #dropzone {
+            width: 75%;
+            height: 10px;
+            transition: height 100ms ease-out;
+          }
+          #dropzone.active {
+            height: 25px;
+            border: 4px dashed red;
+          }
+        </style>
         <script src="https://unpkg.com/htmx.org@2.0.0"></script>
         <script src="./static/scripts.js"></script>
     </head>
@@ -70,9 +81,13 @@ const html = ({ todos = [] }: { todos: string[] }) => `
           <button type="submit">Submit</button>
         </form>
         <ul>
-          ${todos.map(todo => (
-            `<li>${todo}</li>`
-          ))}
+          ${todos.reduce((prev, todo, idx) => {
+            return prev + `
+              <li key=${idx} id=${idx} class="item" draggable="true">
+                <div id="dropzone" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)" ondragleave="dragleaveHandler(event)"></div>
+                <div>${todo}</div>
+              </li>`
+          }, "")}
         </ul>
     </body>
   </html>
