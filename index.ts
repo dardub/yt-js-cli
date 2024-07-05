@@ -1,10 +1,19 @@
 import { Headers, CompressionTypes, RequestMethod, ContentTypes } from "./constants.ts";
 
+const DOMAIN = 'localhost'
+const PORT = 8000;
 const todos: string[] = [];
 
 const server = Bun.serve({
-  port: 8000,
+  port: PORT,
   async fetch(request: Request) {
+
+    const path = new URL(request.url)?.pathname;
+
+    if (path.lastIndexOf("static/") !== -1) {
+      const file = Bun.file("." + path);
+      return new Response(file);
+    }
 
     if (request.method === RequestMethod.GET) {
       const res: Response = compressResponse(html({ todos }), request, {
@@ -42,7 +51,7 @@ const server = Bun.serve({
   }
 });
 
-console.log(`Listening on http://localhost:${server.port}`);
+console.log(`Listening on http://${DOMAIN}:${server.port}`);
 
 const html = ({ todos = [] }: { todos: string[] }) => `
   <!DOCTYPE html>
@@ -52,6 +61,7 @@ const html = ({ todos = [] }: { todos: string[] }) => `
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TODO APP</title>
         <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+        <script src="./static/scripts.js"></script>
     </head>
     <body>
         <h1>Todo List</h1>
