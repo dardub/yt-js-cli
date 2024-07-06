@@ -1,8 +1,25 @@
 import { Headers, CompressionTypes, RequestMethod, ContentTypes } from "./constants.ts";
+import { TodoListForm } from "./todoListForm.ts";
+import { TodoList, Todo } from "./todoList.ts";
+
+class ID {
+  public id: number;
+
+  constructor() {
+    this.id = 0;
+  }
+
+  next() {
+    return this.id++;
+  }
+}
 
 const DOMAIN = 'localhost'
 const PORT = 8000;
-const todos: string[] = [];
+// MAX_ORDER is the default sort order for items that haven't been sorted yet
+const MAX_ORDER = 999999; 
+const id = new ID();
+const todos: Todo[] = [];
 
 const server = Bun.serve({
   port: PORT,
@@ -21,19 +38,39 @@ const server = Bun.serve({
       });
       return res;
 
-    } else if (request.method === RequestMethod.POST) {
+    } else if (request.method === RequestMethod.POST && path === '/add') {
+      
+
       try {
         const data = await request.formData();
         const todo = data.get("todo") as string;
         if (todo) {
-          todos.push(todo);
+          todos.push({ id: id.next(), name: todo, order: MAX_ORDER });
         }
         
       } catch (error) {
         throw new Error(error);
       }
 
-      const res: Response = compressResponse(html({ todos }), request, {
+      const res: Response = compressResponse(TodoListForm(todos), request, {
+        headers: { [Headers.ContentType]: ContentTypes.Html }
+      });
+      return res;
+    } else if (request.method === RequestMethod.POST && path === '/update-order') {
+      try {
+        const data = await request.formData();
+        const todoList = data.getAll("todo");
+        // console.log('data', data.getAll("todo"))
+      for (let i = 0; i < todoList.length; i++) {
+        const todo = todos.find(x => x.id === parseInt(todoList[i] as string, 10)); 
+        if (todo) todo.order = i;
+      }
+
+      } catch (error) {
+        throw new Error(error);
+      }
+  
+      const res: Response = compressResponse(TodoList(todos), request, {
         headers: { [Headers.ContentType]: ContentTypes.Html }
       });
       return res;
@@ -53,7 +90,7 @@ const server = Bun.serve({
 
 console.log(`Listening on http://${DOMAIN}:${server.port}`);
 
-const html = ({ todos = [] }: { todos: string[] }) => `
+const html = ({ todos = [] }: { todos: Todo[] }) => `
   <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -76,19 +113,7 @@ const html = ({ todos = [] }: { todos: string[] }) => `
     </head>
     <body>
         <h1>Todo List</h1>
-        <form method="POST" action="/">
-          <input type="text" name="todo"></input>
-          <button type="submit">Submit</button>
-        </form>
-        <ul>
-          ${todos.reduce((prev, todo, idx) => {
-            return prev + `
-              <li key=${idx} id=${idx} class="item" draggable="true">
-                <div id="dropzone" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)" ondragleave="dragleaveHandler(event)"></div>
-                <div>${todo}</div>
-              </li>`
-          }, "")}
-        </ul>
+        ${TodoListForm(todos)}
     </body>
   </html>
 `;
@@ -105,3 +130,4 @@ function compressResponse(body: string, request: Request, options: ResponseInit)
   res.headers.append(Headers.ContentEncoding, CompressionTypes.Gzip);
   return res;
 }
+
