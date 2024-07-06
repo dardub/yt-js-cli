@@ -1,6 +1,6 @@
 import { Headers, CompressionTypes, RequestMethod, ContentTypes } from "./constants.ts";
-import { TodoListForm } from "./todoListForm.ts";
-import { TodoList, Todo } from "./todoList.ts";
+import { TodoListForm } from "./todo-list/todoListForm.ts";
+import { TodoList, Todo } from "./todo-list/todoList.ts";
 
 class ID {
   public id: number;
@@ -109,7 +109,7 @@ const html = ({ todos = [] }: { todos: Todo[] }) => `
           }
         </style>
         <script src="https://unpkg.com/htmx.org@2.0.0"></script>
-        <script src="./static/scripts.js"></script>
+        <script src="./todo-list/static/scripts.js"></script>
     </head>
     <body>
         <h1>Todo List</h1>
