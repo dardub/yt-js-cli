@@ -38,7 +38,6 @@ type SearchResponse = {
     items: SearchResource[]
 }
 
-
 export default function Search(results: SearchResponse) {
     
     return (`
