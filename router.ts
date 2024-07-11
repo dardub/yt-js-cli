@@ -5,6 +5,10 @@ export default class Router {
         this.GetRoot = new RouterNode({ path: "/" });
     }
 
+    getRoot() {
+        return this.GetRoot;
+    }
+
     // Insert new GET Path handler
     Get(path: string, handler: Function): void {
         if (path === "/") {
@@ -59,6 +63,27 @@ export default class Router {
             }
         }
         return null;
+    }
+
+    getMatch(path: string) {
+        // Remove leading and trailing slashes
+        path = this.trimSlashes(path);
+        
+        let segments: string[] = path.split("/");
+        segments.unshift("/");
+
+
+        
+    }
+
+    trimSlashes(path: string): string {
+        if (path[0] === "/") {
+            path = path.slice(1);
+        }
+        if (path[path.length-1] === "/") {
+            path = path.slice(0, -1);
+        }
+        return path;
     }
 
 }
