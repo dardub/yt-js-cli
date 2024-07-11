@@ -65,15 +65,25 @@ export default class Router {
         return null;
     }
 
-    getMatch(path: string) {
-        // Remove leading and trailing slashes
+    getMatch(path: string): RouterNode|null {
         path = this.trimSlashes(path);
         
         let segments: string[] = path.split("/");
         segments.unshift("/");
 
+        let curr = this.GetRoot;
 
-        
+        while (segments.length) {
+            const pathSegment = segments.shift();
+
+            // Return curr if reached end of path
+            if (segments.length <= 0) return curr;
+
+            if (!curr || curr.path !== pathSegment) return null;
+
+            curr = this.getChild(curr, segments[0]);
+        }
+        return curr;
     }
 
     trimSlashes(path: string): string {
@@ -88,7 +98,7 @@ export default class Router {
 
 }
 
-class RouterNode {
+export class RouterNode {
     path: string;
     handler?: Function;
     children?: RouterNode[];

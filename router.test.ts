@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import Router from "./router.ts";
+import Router, { RouterNode } from "./router.ts";
 
 const router = new Router();
 
@@ -31,7 +31,25 @@ test("Register multiple static get routes with new intermediate paths", () => {
     expect(router.getRoot().children[0].children[0].handler).toBeEmpty();
 });
 
+test("Register static get routes and match routes", () => {
+    router.Get("/", homeHandler);
+    router.Get("/user/profile", profileHandler);
+
+    expect(router.getMatch("/")).toBeInstanceOf(RouterNode);
+    expect(router.getMatch("/")?.handler).toBe(homeHandler);
+    expect(router.getMatch("/video")).toBeNull();
+    expect(router.getMatch("/user/profile")).toBeInstanceOf(RouterNode);
+    expect(router.getMatch("/user/profile")?.handler).toBe(profileHandler);
+});
+
+function profileHandler() {
+    console.log('profileHandler');
+}
+
+function homeHandler() {
+    console.log('homeHandler');
+}
 
 function handler() {
-    console.log('handler', router);
+    console.log('handler');
 }
