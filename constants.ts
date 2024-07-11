@@ -22,5 +22,5 @@ export enum CompressionTypes {
 
 export enum ContentTypes {
   Html = "text/html",
-  Json = "text/json",
+  Json = "application/json",
 }

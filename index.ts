@@ -1,6 +1,17 @@
 import { Headers, CompressionTypes, RequestMethod, ContentTypes } from "./constants.ts";
 import { TodoListForm } from "./todo-list/todoListForm.ts";
 import { TodoList, Todo } from "./todo-list/todoList.ts";
+import { YT_API_KEY } from "./.env.json";
+import Player from "./player/player.ts";
+import Search from "./search.ts";
+import Head from "./head.ts";
+import Html from "./html.ts";
+
+enum SearchType {
+  Channel = 'channel',
+  Video = 'video',
+  Playlist = 'playlist',
+}
 
 class ID {
   public id: number;
@@ -16,6 +27,7 @@ class ID {
 
 const DOMAIN = 'localhost'
 const PORT = 8000;
+
 // MAX_ORDER is the default sort order for items that haven't been sorted yet
 const MAX_ORDER = 999999; 
 const id = new ID();
@@ -26,6 +38,8 @@ const server = Bun.serve({
   async fetch(request: Request) {
 
     const path = new URL(request.url)?.pathname;
+    const search = new URL(request.url)?.search;
+    const params = new URLSearchParams(search);
 
     if (path.lastIndexOf("static/") !== -1) {
       const file = Bun.file("." + path);
@@ -33,7 +47,48 @@ const server = Bun.serve({
     }
 
     if (request.method === RequestMethod.GET) {
-      const res: Response = compressResponse(html({ todos }), request, {
+      const searchParams = params.has("s") && params.get("s");
+      const typeParams = params.has("type") && params.get("type");
+      const isValidType = typeParams && Object.values<string>(SearchType).includes(typeParams);
+
+      // search
+      if (searchParams) {
+        let url = `https://www.googleapis.com/youtube/v3/search?key=${YT_API_KEY}&part=snippet&q=${searchParams}`;
+
+        if (isValidType) {
+          url += "&type=" + typeParams;
+        } 
+        try {
+          const ytResponse = await fetch(url);
+
+          if (!ytResponse.ok) throw new Error("Response status: " + ytResponse.status);
+
+          const json = await ytResponse.json();
+          const html = Html({
+            head: Head({
+              pageTitle: "Search Results for " + searchParams,
+            }),
+            body: Search(json),
+          });
+
+          const res: Response = compressResponse(html, request, {
+            headers: { [Headers.ContentType]: ContentTypes.Html }
+          });
+          return res;
+
+          
+        } catch (error) {
+          console.log("Error ocurred: ", error);
+        }
+      }
+      
+      const html = Html({
+        head: Head({
+          pageTitle: "MyTube Home Page",
+        }),
+        body: Player(),
+      })
+      const res: Response = compressResponse(html, request, { 
         headers: { [Headers.ContentType]: ContentTypes.Html }
       });
       return res;
@@ -89,34 +144,6 @@ const server = Bun.serve({
 });
 
 console.log(`Listening on http://${DOMAIN}:${server.port}`);
-
-const html = ({ todos = [] }: { todos: Todo[] }) => `
-  <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>TODO APP</title>
-        <style>
-          #dropzone {
-            width: 75%;
-            height: 10px;
-            transition: height 100ms ease-out;
-          }
-          #dropzone.active {
-            height: 25px;
-            border: 4px dashed red;
-          }
-        </style>
-        <script src="https://unpkg.com/htmx.org@2.0.0"></script>
-        <script src="./todo-list/static/scripts.js"></script>
-    </head>
-    <body>
-        <h1>Todo List</h1>
-        ${TodoListForm(todos)}
-    </body>
-  </html>
-`;
 
 function compressResponse(body: string, request: Request, options: ResponseInit): Response {
   const clientAcceptsGzip: boolean = request.headers.get(Headers.AcceptEncoding)?.indexOf(CompressionTypes.Gzip) !== -1;
