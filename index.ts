@@ -1,6 +1,7 @@
 import { Headers, CompressionTypes, RequestMethod, ContentTypes } from "./constants.ts";
 import Router from './router.ts';
 import HomeController from "./home-controller.ts";
+import SearchController from "./search-controller.ts";
 
 const DOMAIN = 'localhost'
 const PORT = 8000;
@@ -8,6 +9,7 @@ const PORT = 8000;
 // Router
 const router = new Router();
 router.Get("/", HomeController);
+router.Get("/search", SearchController);
 
 
 const server = Bun.serve({
