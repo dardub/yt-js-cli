@@ -61,8 +61,7 @@ export default function Search(results: SearchResponse) {
                         if (!prop) return {
                             videoId: items[counter]?.id?.videoId,
                             select: function() {
-                                let location = "/";
-                                location += "/?v=" + items[counter]?.id?.videoId;
+                                let location = "/?v=" + items[counter]?.id?.videoId;
                                 window.location.href = location;
                             }
                         }

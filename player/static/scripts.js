@@ -1,12 +1,14 @@
 let player;
 const urlParams = new URLSearchParams(window.location.search);
-const videoId = urlParams ? urlParams.get("v") : "M7lc1UVf-VE";
+const videoId = urlParams.size ? urlParams.get("v") : "M7lc1UVf-VE";
 
 const tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
+
+console.log('video id', videoId, urlParams);
 
 
 window.onYouTubeIframeAPIReady = function() {
