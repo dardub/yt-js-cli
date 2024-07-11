@@ -1,11 +1,18 @@
 export default class Router {
     private GetRoot;
 
-
+    constructor() {
+        this.GetRoot = new RouterNode({ path: "/" });
+    }
 
     // Insert new GET Path handler
     Get(path: string, handler: Function): void {
-        // TODO: Base "/" endpoint case
+        if (path === "/") {
+            if (this.GetRoot.handler) {
+                throw new Error("/ route already exists");
+            }
+            this.GetRoot.handler = handler;
+        }
         // Remove leading and trailing slashes
         if (path[0] === "/") {
             path = path.slice(1);
@@ -15,6 +22,7 @@ export default class Router {
         }
         
         let segments: string[] = path.split("/");
+        segments.unshift("/");
 
         if (this.GetRoot === undefined) {
            this.GetRoot = new RouterNode({ path: segments[0], handler });
@@ -60,7 +68,7 @@ class RouterNode {
     handler?: Function;
     children?: RouterNode[];
 
-    constructor({ path, handler }: { path: string, handler: Function}) {
+    constructor({ path, handler }: { path: string, handler?: Function}) {
         this.path = path;
         this.handler = handler;
     }

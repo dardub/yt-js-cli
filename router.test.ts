@@ -8,6 +8,7 @@ test("Register multiple static get routes", () => {
     router.Get("/users/profile", handler);
     router.Get("/users/profile/update", handler);
     router.Get("/users/profile/settings", handler);
+    router.Get("/videos/recommended", handler);
     console.log('router', router);
     // TODO: expect(router.match("users/profile/update").toExecute(handler))
 });
