@@ -75,11 +75,11 @@ export default class Router {
 
         while (segments.length) {
             const pathSegment = segments.shift();
+            
+            if (!curr || curr.path !== pathSegment) return null;
 
             // Return curr if reached end of path
             if (segments.length <= 0) return curr;
-
-            if (!curr || curr.path !== pathSegment) return null;
 
             curr = this.getChild(curr, segments[0]);
         }
