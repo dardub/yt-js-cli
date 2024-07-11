@@ -5,30 +5,40 @@ type SearchResource = {
         channelId: string;
         playlistId?: string;
     },
-    snippet: {
-        publishedAt: Date;
-        channelId: string;
-        title: string;
-        description: string;
-        thumbnails: {
-            default?: {
-                url: string;
-                width: number;
-                height: number;
-            },
-            medium?: {
-                url: string;
-                width: number;
-                height: number;
-            },
-            high?: {
-                url: string;
-                width: number;
-                height: number;
-            },
-        };
-        channelTitle: string;
-    }
+    snippet?: Snippet;
+    statistics?: Statistics;
+}
+
+type Snippet = {
+    publishedAt: Date;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: {
+        default?: {
+            url: string;
+            width: number;
+            height: number;
+        },
+        medium?: {
+            url: string;
+            width: number;
+            height: number;
+        },
+        high?: {
+            url: string;
+            width: number;
+            height: number;
+        },
+    };
+    channelTitle: string;
+}
+
+type Statistics = {
+    viewCount: number;
+    likeCount: number;
+    favoriteCount: number;
+    commentCount: number;
 }
 
 type SearchResponse = {

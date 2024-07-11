@@ -2,6 +2,7 @@ import { Headers, CompressionTypes } from "./constants.ts";
 
 function compressResponse(body: string, request: Request, options: ResponseInit): Response {
     const clientAcceptsGzip: boolean = request.headers.get(Headers.AcceptEncoding)?.indexOf(CompressionTypes.Gzip) !== -1;
+    return new Response(body, options);
   
     if (!clientAcceptsGzip) {
       return new Response(body, options);
